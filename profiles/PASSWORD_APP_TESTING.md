@@ -1,8 +1,8 @@
 # Password App Test profile
 
-[`password-app-test.mobileconfig`](password-app-test.mobileconfig) adds a removable **Password Test** Home Screen shortcut to `https://auth-services-safari.onrender.com/`. It opens the site in Safari so iOS can use its normal Password AutoFill, passkey, Face ID, and device-consent interfaces.
+[`password-app-test.mobileconfig`](password-app-test.mobileconfig) adds a removable **Password Test** Home Screen shortcut to `https://auth-services-safari.onrender.com/?mode=password-test`. It opens the site in Safari so iOS can use its normal Password AutoFill, passkey, Face ID, and device-consent interfaces.
 
-The profile contains only a Web Clip. It does not install a password manager, read saved passwords, create credentials without consent, change the default AutoFill provider, or bypass Face ID or the device passcode.
+The profile contains only a Web Clip. It does not install a password manager, read saved passwords, create credentials without consent, change the default AutoFill provider, or bypass Face ID or the device passcode. After successful registration or sign-in, the test server records the normalized test email and timestamp in PostgreSQL. The authenticated session can see only its own audit history.
 
 ## Install
 
@@ -19,12 +19,17 @@ The profile contains only a Web Clip. It does not install a password manager, re
 
 ## Passkey test
 
-1. In **Password Test**, use the site's registration flow with a non-sensitive test account name.
+1. In **Password Test**, use the site's registration flow with an email address dedicated to testing. Do not use another person's address.
 2. Confirm the system passkey sheet appears for `auth-services-safari.onrender.com`.
 3. Approve creation using Face ID, Touch ID, or the device passcode.
 4. Sign out, then use the sign-in flow.
 5. Select the saved passkey and complete the system verification.
 6. Confirm the site reports a successful WebAuthn assertion.
+7. Confirm **Secure Audit** displays the signed-in test email and successful event timestamp.
+
+## Internal test mailbox
+
+After signing in, use **Test Mailbox** to view **Inbox**, **Sent**, or **All**, or compose a text-only message to another registered test email. Messages remain in the app's PostgreSQL test database and are available only to authenticated sender and recipient sessions. The mailbox does not access iCloud Mail and does not deliver internet email.
 
 Canceling the system sheet should produce a normal cancellation result. If no matching passkey exists, use the site's registration flow. Passkeys are scoped to the site's relying-party domain; a passkey created for this Render domain will not automatically work on another domain.
 
