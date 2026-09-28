@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>PayloadIdentifier</key>
+	<string>com.wearedhundreed.safari-passkey-lab</string>
+	<key>PayloadUUID</key>
+	<string>46F81AE9-0455-593E-8BB1-95A48E14AEB1</string>
+	<key>PayloadDisplayName</key>
+	<string>Safari Passkey Lab</string>
+	<key>PayloadDescription</key>
+	<string>Adds a removable Home Screen shortcut to the Safari passkey web app.</string>
+	<key>PayloadOrganization</key>
+	<string>wearedhundreed</string>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadType</key>
+			<string>com.apple.webClip.managed</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>PayloadIdentifier</key>
+			<string>com.wearedhundreed.safari-passkey-lab.webclip</string>
+			<key>PayloadUUID</key>
+			<string>2B2D4564-122D-5092-86C7-4A8EA2FDED70</string>
+			<key>PayloadDisplayName</key>
+			<string>Safari Passkey Lab</string>
+			<key>Label</key>
+			<string>Passkey Lab</string>
+			<key>URL</key>
+			<string>https://auth-services-safari.onrender.com/</string>
+			<key>FullScreen</key>
+			<false/>
+			<key>IsRemovable</key>
+			<true/>
+		</dict>
+	</array>
+</dict>
+</plist>
