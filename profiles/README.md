@@ -1,5 +1,10 @@
 # iPhone configuration profile: Safari Passkey Lab
 
+## Available profiles
+
+- [`safari-passkey-lab.mobileconfig`](safari-passkey-lab.mobileconfig): removable Home Screen shortcut for the Safari passkey lab.
+- [`native-mail-smime-intune.mobileconfig`](native-mail-smime-intune.mobileconfig): Microsoft 365 native Mail profile with S/MIME controls. See [Native Mail S/MIME setup](NATIVE_MAIL_SMIME.md).
+
 [`safari-passkey-lab.mobileconfig`](safari-passkey-lab.mobileconfig) is an iOS/iPadOS configuration profile with one Web Clip payload. It adds a **Passkey Lab** Home Screen icon for `https://auth-services-safari.onrender.com/`. The clip opens in Safari (`FullScreen` is false), so the normal HTTPS origin and Safari passkey flow are used. The icon and profile are removable.
 
 This file can be imported into an existing MDM as a custom iOS/iPadOS configuration profile or installed manually on an iPhone. It is **not** an MDM enrollment profile: this repository contains settings catalog reference exports, but no Apple Push Notification service certificate, enrollment service, device identity, or MDM check-in endpoints. It grants no device management authority and does not carry a password, token, certificate, or private key.

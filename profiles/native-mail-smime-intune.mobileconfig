@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>PayloadIdentifier</key>
+	<string>com.wearedhundreed.native-mail-smime</string>
+	<key>PayloadUUID</key>
+	<string>B588C7B1-8FEE-54D1-9B8B-1B4C01E0CC30</string>
+	<key>PayloadDisplayName</key>
+	<string>Native Mail S/MIME</string>
+	<key>PayloadDescription</key>
+	<string>Configures Microsoft 365 in Apple Mail with S/MIME signing and per-message encryption controls.</string>
+	<key>PayloadOrganization</key>
+	<string>wearedhundreed</string>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadType</key>
+			<string>com.apple.eas.account</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>PayloadIdentifier</key>
+			<string>com.wearedhundreed.native-mail-smime.exchange</string>
+			<key>PayloadUUID</key>
+			<string>25C5189D-870D-5570-96EE-AC7A31EAA9E4</string>
+			<key>PayloadDisplayName</key>
+			<string>Microsoft 365 S/MIME</string>
+			<key>PayloadDescription</key>
+			<string>Configures an Exchange Online account in Apple Mail with S/MIME controls.</string>
+			<key>PayloadOrganization</key>
+			<string>wearedhundreed</string>
+			<key>Host</key>
+			<string>outlook.office365.com</string>
+			<key>UserName</key>
+			<string>{{userprincipalname}}</string>
+			<key>EmailAddress</key>
+			<string>{{mail}}</string>
+			<key>OAuth</key>
+			<true/>
+			<key>SSL</key>
+			<true/>
+			<key>MailNumberOfPastDaysToSync</key>
+			<integer>31</integer>
+			<key>SMIMESigningEnabled</key>
+			<false/>
+			<key>SMIMESigningUserOverrideable</key>
+			<true/>
+			<key>SMIMESigningCertificateUUIDUserOverrideable</key>
+			<true/>
+			<key>SMIMEEncryptByDefault</key>
+			<false/>
+			<key>SMIMEEncryptByDefaultUserOverrideable</key>
+			<true/>
+			<key>SMIMEEnableEncryptionPerMessageSwitch</key>
+			<true/>
+			<key>SMIMEEncryptionCertificateUUIDUserOverrideable</key>
+			<true/>
+			<key>PreventMove</key>
+			<false/>
+			<key>PreventAppSheet</key>
+			<false/>
+		</dict>
+	</array>
+</dict>
+</plist>
