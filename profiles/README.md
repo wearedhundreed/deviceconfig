@@ -12,7 +12,7 @@ This file can be imported into an existing MDM as a custom iOS/iPadOS configurat
 
 ## Intune custom profile
 
-In Intune, create an **iOS/iPadOS → Templates → Custom** configuration profile, upload the `.mobileconfig` file, and assign it only to devices you manage. The Intune admin must review assignment scope and the exact payload before distribution. Do not use this profile as a replacement for enrollment or for the OAuth server's Vercel connector configuration.
+In the Intune admin center, go to **Devices → Manage devices → Configuration → Create → New policy**, select **iOS/iPadOS → Templates → Custom**, upload the `.mobileconfig` file, and assign it only to devices you manage. Choose the device deployment channel for this Web Clip payload. The Intune admin must review assignment scope and the exact payload before distribution. Do not use this profile as a replacement for enrollment or for the OAuth server's Vercel connector configuration.
 
 ## Validation
 
