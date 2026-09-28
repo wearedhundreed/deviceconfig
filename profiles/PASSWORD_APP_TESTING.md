@@ -29,7 +29,7 @@ The profile contains only a Web Clip. It does not install a password manager, re
 
 ## Internal test mailbox
 
-After signing in, use **Test Mailbox** to view **Inbox**, **Outbox**, **Sent**, or **All**, or compose a text-only message to another registered test email. The server submits the message to an isolated Email Sandbox, which captures it without delivering to a real person. A captured message is copied into the authenticated recipient's internal Inbox. Failed submissions remain in the sender's Outbox. The mailbox does not access iCloud Mail.
+After signing in, use **Test Mailbox** to view **Inbox**, **Outbox**, **Sent**, or **All**, or compose a text-only message to another registered test email. The built-in PostgreSQL sandbox delivers it immediately to the authenticated recipient's internal Inbox without requiring an external provider or delivering to a real person. Optional Mailtrap SMTP capture can be enabled later through Render secrets. The mailbox does not access iCloud Mail.
 
 Canceling the system sheet should produce a normal cancellation result. If no matching passkey exists, use the site's registration flow. Passkeys are scoped to the site's relying-party domain; a passkey created for this Render domain will not automatically work on another domain.
 
