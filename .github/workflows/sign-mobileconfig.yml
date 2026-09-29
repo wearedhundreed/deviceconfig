@@ -1,0 +1,77 @@
+name: Sign iOS configuration profile
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sign-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Confirm signing secrets are configured
+        env:
+          PROFILE_SIGNING_P12_BASE64: ${{ secrets.PROFILE_SIGNING_P12_BASE64 }}
+          PROFILE_SIGNING_P12_PASSWORD: ${{ secrets.PROFILE_SIGNING_P12_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PROFILE_SIGNING_P12_BASE64:-}" ] || [ -z "${PROFILE_SIGNING_P12_PASSWORD:-}" ]; then
+            echo 'Add PROFILE_SIGNING_P12_BASE64 and PROFILE_SIGNING_P12_PASSWORD as encrypted repository secrets.' >&2
+            exit 1
+          fi
+
+      - name: Sign and verify profile
+        env:
+          PROFILE_SIGNING_P12_BASE64: ${{ secrets.PROFILE_SIGNING_P12_BASE64 }}
+          PROFILE_SIGNING_P12_PASSWORD: ${{ secrets.PROFILE_SIGNING_P12_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+
+          signing_dir="${RUNNER_TEMP}/mobileconfig-signing"
+          artifact_dir="${RUNNER_TEMP}/signed-profile"
+          mkdir -p "$signing_dir" "$artifact_dir"
+          trap 'find "$signing_dir" -type f -exec shred -u {} + 2>/dev/null || true' EXIT
+
+          printf '%s' "$PROFILE_SIGNING_P12_BASE64" | base64 --decode > "$signing_dir/identity.p12"
+          P12_PASSWORD="$PROFILE_SIGNING_P12_PASSWORD" \
+            openssl pkcs12 -in "$signing_dir/identity.p12" -passin env:P12_PASSWORD \
+              -clcerts -nokeys -out "$signing_dir/signer.pem"
+          P12_PASSWORD="$PROFILE_SIGNING_P12_PASSWORD" \
+            openssl pkcs12 -in "$signing_dir/identity.p12" -passin env:P12_PASSWORD \
+              -nocerts -nodes -out "$signing_dir/private-key.pem"
+          P12_PASSWORD="$PROFILE_SIGNING_P12_PASSWORD" \
+            openssl pkcs12 -in "$signing_dir/identity.p12" -passin env:P12_PASSWORD \
+              -cacerts -nokeys -out "$signing_dir/chain.pem"
+
+          sign_args=(
+            smime -sign -binary -nodetach -outform DER
+            -in profiles/secure-password-manager.mobileconfig
+            -signer "$signing_dir/signer.pem"
+            -inkey "$signing_dir/private-key.pem"
+            -out "$artifact_dir/secure-password-manager-signed.mobileconfig"
+          )
+          if grep -q 'BEGIN CERTIFICATE' "$signing_dir/chain.pem"; then
+            sign_args+=( -certfile "$signing_dir/chain.pem" )
+          fi
+          openssl "${sign_args[@]}"
+
+          openssl smime -verify -binary -inform DER -noverify \
+            -in "$artifact_dir/secure-password-manager-signed.mobileconfig" \
+            -out "$signing_dir/verified.mobileconfig"
+          cmp profiles/secure-password-manager.mobileconfig "$signing_dir/verified.mobileconfig"
+          openssl pkcs7 -inform DER \
+            -in "$artifact_dir/secure-password-manager-signed.mobileconfig" \
+            -print_certs -noout > "$artifact_dir/signing-certificate-summary.txt"
+
+      - name: Upload signed profile
+        uses: actions/upload-artifact@v4
+        with:
+          name: secure-password-manager-signed
+          path: ${{ runner.temp }}/signed-profile/
+          if-no-files-found: error
+          retention-days: 7
