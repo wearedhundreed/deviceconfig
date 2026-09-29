@@ -4,6 +4,7 @@
 
 - [`safari-passkey-lab.mobileconfig`](safari-passkey-lab.mobileconfig): removable Home Screen shortcut for the Safari passkey lab.
 - [`password-app-test.mobileconfig`](password-app-test.mobileconfig): removable Safari shortcut for testing Password AutoFill and passkeys. See [Password App testing](PASSWORD_APP_TESTING.md).
+- [`apple-business-profile-host.mobileconfig`](apple-business-profile-host.mobileconfig): removable shortcut to the HTTPS profile host and legitimate Apple Business setup checklist. See [Apple Business profile host](APPLE_BUSINESS_PROFILE_HOST.md).
 - [`native-mail-smime-intune.mobileconfig`](native-mail-smime-intune.mobileconfig): Microsoft 365 native Mail profile with S/MIME controls. See [Native Mail S/MIME setup](NATIVE_MAIL_SMIME.md).
 - [`icloud-secure-password-manager-smime.mobileconfig`](icloud-secure-password-manager-smime.mobileconfig): optional interactive iCloud Mail account for `secure-password-manager.com` with user-selectable S/MIME controls. See [iCloud custom domain S/MIME setup](ICLOUD_CUSTOM_DOMAIN_SMIME.md).
 

