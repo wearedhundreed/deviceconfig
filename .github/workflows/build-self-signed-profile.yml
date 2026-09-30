@@ -1,4 +1,3 @@
-workflow YAML: valid
 name: Build self-signed iOS profile bundle
 
 on:
