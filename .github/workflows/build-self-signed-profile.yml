@@ -1,0 +1,96 @@
+workflow YAML: valid
+name: Build self-signed iOS profile bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/build-self-signed-profile.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Generate isolated CA and sign profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+
+          work_dir="${RUNNER_TEMP}/mobileconfig-pki"
+          output_dir="${RUNNER_TEMP}/mobileconfig-public-output"
+          mkdir -p "$work_dir" "$output_dir"
+          trap 'find "$work_dir" -type f -exec shred -u {} + 2>/dev/null || true' EXIT
+
+          ROOT_PASS="$(openssl rand -hex 32)"
+          SIGNER_PASS="$(openssl rand -hex 32)"
+          export ROOT_PASS SIGNER_PASS
+
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 \
+            -aes-256-cbc -pass env:ROOT_PASS -out "$work_dir/root-ca.key.pem"
+          openssl req -new -x509 -sha256 -days 3650 \
+            -key "$work_dir/root-ca.key.pem" -passin env:ROOT_PASS \
+            -subj '/C=US/O=MOREDESA LLC/CN=MOREDESA Mobileconfig Root CA' \
+            -addext 'basicConstraints=critical,CA:true,pathlen:0' \
+            -addext 'keyUsage=critical,keyCertSign,cRLSign' \
+            -addext 'subjectKeyIdentifier=hash' \
+            -addext 'authorityKeyIdentifier=keyid:always,issuer' \
+            -out "$work_dir/root-ca.crt.pem"
+
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 \
+            -aes-256-cbc -pass env:SIGNER_PASS -out "$work_dir/profile-signer.key.pem"
+          openssl req -new -sha256 \
+            -key "$work_dir/profile-signer.key.pem" -passin env:SIGNER_PASS \
+            -subj '/C=US/O=MOREDESA LLC/CN=MOREDESA Mobileconfig Signing' \
+            -out "$work_dir/profile-signer.csr.pem"
+          printf '%s\n' \
+            'subjectKeyIdentifier=hash' \
+            'authorityKeyIdentifier=keyid,issuer' \
+            'basicConstraints=critical,CA:false' \
+            'keyUsage=critical,digitalSignature' \
+            > "$work_dir/profile-signer.ext"
+          openssl x509 -req -sha256 -days 825 \
+            -in "$work_dir/profile-signer.csr.pem" \
+            -CA "$work_dir/root-ca.crt.pem" \
+            -CAkey "$work_dir/root-ca.key.pem" -passin env:ROOT_PASS \
+            -CAcreateserial -extfile "$work_dir/profile-signer.ext" \
+            -out "$work_dir/profile-signer.crt.pem"
+
+          openssl verify -CAfile "$work_dir/root-ca.crt.pem" \
+            "$work_dir/profile-signer.crt.pem"
+          openssl cms -sign -binary -nodetach -md sha256 \
+            -in profiles/secure-password-manager.mobileconfig \
+            -signer "$work_dir/profile-signer.crt.pem" \
+            -inkey "$work_dir/profile-signer.key.pem" -passin env:SIGNER_PASS \
+            -certfile "$work_dir/root-ca.crt.pem" -outform DER \
+            -out "$output_dir/secure-password-manager-signed.mobileconfig"
+          openssl cms -verify -binary -inform DER \
+            -in "$output_dir/secure-password-manager-signed.mobileconfig" \
+            -CAfile "$work_dir/root-ca.crt.pem" -purpose any \
+            -out "$work_dir/verified.mobileconfig"
+          cmp profiles/secure-password-manager.mobileconfig "$work_dir/verified.mobileconfig"
+
+          openssl x509 -in "$work_dir/root-ca.crt.pem" -outform DER \
+            -out "$output_dir/MOREDESA-Mobileconfig-Root-CA.cer"
+          (
+            cd "$output_dir"
+            sha256sum MOREDESA-Mobileconfig-Root-CA.cer \
+              secure-password-manager-signed.mobileconfig > SHA256SUMS
+          )
+
+          unset ROOT_PASS SIGNER_PASS
+
+      - name: Upload public installation bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: secure-password-manager-self-signed
+          path: ${{ runner.temp }}/mobileconfig-public-output/
+          if-no-files-found: error
+          retention-days: 7
